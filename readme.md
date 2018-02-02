@@ -1,2 +1,2 @@
 # bitcoin-py
-bitcoin implement by python
+bitcoin implement by python!
