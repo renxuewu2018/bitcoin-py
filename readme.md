@@ -1,3 +1,2 @@
-test
-
-# first
+# bitcoin-py
+bitcoin implement by python
