@@ -9,13 +9,17 @@
 # @Email:  seektolive@gmail.com
 # @Date:   2018-03-21 14:49:10
 # @Last Modified by:   xwren
-# @Last Modified time: 2018-03-21 18:24:11
+# @Last Modified time: 2018-03-21 23:48:34
 
 import requests
 import headers
 import re
 from lxml import etree
 import time
+import mysql.connector
+import datetime
+from apscheduler.schedulers.blocking import BlockingScheduler
+import pytz
 
 # 持币用户（新增地址）
 def holders_spider(spider_url):
@@ -23,12 +27,15 @@ def holders_spider(spider_url):
 	response = requests.get(test_url,headers=headers.get_random_header()).text
 	# parser token_holders
 	token_holders = re.findall('(\d{1,20}) addresses',response)
+	supply = re.findall('EOS \(\$(.*)',response)
+	supply_num = supply[0].strip().replace(',','')[:-1]
+
 	if len(token_holders) > 0:
 		token_holders_num = token_holders[0]
 	else:
 		token_holders_num = 0
 	print('token_holders:%s' %(token_holders_num))
-	return token_holders_num
+	return token_holders_num,supply_num
 # 交易量数据采集
 def tranfers_spider(spider_url):
 	test_url = 'https://etherscan.io/token/generic-tokentxns2?contractAddress=0x86fa049857e0209aa7d9e616f7eb3b3b78ecfdb0'
@@ -90,7 +97,6 @@ def facebook_spider():
 
 	return facebook_like_num,facebook_followers_num
 
-
 # 社区增长量（twitter）
 def twitter_spider():
 	test_url = 'https://twitter.com/eos_io'
@@ -116,27 +122,58 @@ def twitter_spider():
 def telegram_spider():
 	test_url = 'https://t.me/joinchat/AAAAAEQbOeucnaMWN0A9dQ'
 	response = requests.get(test_url,headers=headers.get_random_header()).text
-	print(response)
-
+	# print(response)
 	tree = etree.HTML(response)
 	members = tree.xpath('//div[@class="tgme_page_extra"]')
 	if len(members) > 0:
 		members_num = int(members[0].text.strip().replace('members','').replace(' ',''))
 	else:
 		members_num = 0
-	print(members_num)
 	return members_num
 
-def main():
-	holders_spider('')
-	tranfers_spider("url")
-	github_liveness_spider()
-	telegram_spider()
-	twitter_spider()
-	facebook_spider()
-
-if __name__ == '__main__':
+def run_total_job():
 	start = time.clock()
-	main()
+	token_id = 'EOS'
+	token_holders,supply_num= holders_spider('')
+	transfers = tranfers_spider("url")
+	watch_num,star_num,fork_num,commits_num = github_liveness_spider()
+	save_data((token_holders,transfers,watch_num,star_num,fork_num,commits_num,supply_num,token_id,get_time()))
+	# 需要科学上网
+	# telegram_spider()
+	# twitter_spider()
+	# facebook_spider()
 	end = time.clock()
 	print('running time:%s seconds' %(end-start))
+
+con = mysql.connector.connect(
+	user='root', password='rxw1118', database='spider')
+cursor = con.cursor()
+insert_sql = 'insert into token_increase_info(token_holders,transfers,github_watch,github_star,github_fork,github_commits,supply,token_id,createtime) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+
+def save_data(data):
+	try:
+		num = cursor.execute(insert_sql,data)
+		con.commit()
+		print(get_time(),"已存入"+str(cursor.rowcount)+"条数据！")
+	except:
+		import traceback
+		traceback.print_exc()
+		con.rollback()
+	# finally:
+	# 	cursor.close()
+	# 	con.close()
+def get_time():
+	lastTime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+	return lastTime
+
+def job():
+	print("开始执行...")
+	timez = pytz.timezone('Asia/Shanghai')
+	scheduler = BlockingScheduler(timezone=timez)
+	scheduler.add_job(func=run_total_job, trigger='cron', hour ='*/1')
+	scheduler.start()
+
+
+if __name__ == '__main__':
+	run_total_job()
+	# job()
