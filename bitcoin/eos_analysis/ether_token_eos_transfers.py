@@ -4,7 +4,7 @@
 # @Email:  seektolive@gmail.com
 # @Date:   2018-03-19 16:34:51
 # @Last Modified by:   xwren
-# @Last Modified time: 2018-03-22 16:45:45
+# @Last Modified time: 2018-03-22 21:43:41
 import requests
 from lxml import etree
 import random
@@ -57,7 +57,7 @@ def get_format_time(t):
 	return strTime
 
 conn = mysql.connector.connect(
-	user='root', password='imsbase', database='coin')
+	user='root', password='rxw1118', database='spider')
 cursor = conn.cursor()
 
 holder_sql = 'insert into token_transfers(TxHash,transfertime,Fromaddress,InOrOut,Toaddress,Quantity,createtime,tokenid,status)  values(%s,%s,%s,%s,%s,%s,%s,%s,%s)'
@@ -71,7 +71,8 @@ def save_transfer(holders):
 def next_page(token_url,token_id,current_page=0):
 	try:
 		response = requests.get(token_url,headers=get_random_header()).text
-		parser(response)
+		print(response)
+		# parser(response)
 		# tree = etree.HTML(response)
 		# page_num = tree.xpath('//*[@id="PagingPanel"]/span/b[2]/text()')[0]
 		# next_page_num = current_page+1

@@ -9,7 +9,7 @@
 # @Email:  seektolive@gmail.com
 # @Date:   2018-03-21 14:49:10
 # @Last Modified by:   xwren
-# @Last Modified time: 2018-03-21 23:48:34
+# @Last Modified time: 2018-03-22 21:15:16
 
 import requests
 import headers
@@ -170,10 +170,17 @@ def job():
 	print("开始执行...")
 	timez = pytz.timezone('Asia/Shanghai')
 	scheduler = BlockingScheduler(timezone=timez)
-	scheduler.add_job(func=run_total_job, trigger='cron', hour ='*/1')
+	scheduler.add_job(func=run_total_job, trigger='cron',hour ='*/1')
 	scheduler.start()
 
+import json
+# 价格
+def get_price():
+	price_url = 'https://min-api.cryptocompare.com/data/price?fsym=EOS&tsyms=USD,CNY'
+	req = requests.get(price_url).text
+	price_o = json.loads(req)
+	return price_o['USD'],price_o['CNY']
 
 if __name__ == '__main__':
-	run_total_job()
-	# job()
+	# run_total_job()
+	get_price()
