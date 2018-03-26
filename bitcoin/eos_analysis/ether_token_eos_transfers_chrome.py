@@ -6,7 +6,7 @@
 # @Fd:  spider eos transfers data every day for test
 # @Date:   2018-03-22 21:51:17
 # @Last Modified by:   renxuewu
-# @Last Modified time: 2018-03-26 22:27:43
+# @Last Modified time: 2018-03-26 23:36:53
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -48,12 +48,12 @@ def parser(url):
 			createtime = get_current_time()
 			print(TxHash,transfertime,Fromaddress,InOrOut,Toaddress,Quantity,createtime,'EOS','12')
 			token_holders.append((TxHash,transfertime,Fromaddress,InOrOut,Toaddress,Quantity,createtime,'EOS','12'))
-	save_transfer(token_holders)
+	# save_transfer(token_holders)
 	# return True
 
-conn = mysql.connector.connect(
-	user='root', password='imsbase', database='coin')
-cursor = conn.cursor()
+# conn = mysql.connector.connect(
+# 	user='root', password='imsbase', database='coin')
+# cursor = conn.cursor()
 
 holder_sql = 'insert into token_transfers(TxHash,transfertime,Fromaddress,InOrOut,Toaddress,Quantity,createtime,tokenid,status)  values(%s,%s,%s,%s,%s,%s,%s,%s,%s)'
 # step 4
