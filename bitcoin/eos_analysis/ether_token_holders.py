@@ -4,8 +4,8 @@
 # 以太坊token 持有者数据采集
 # @Email:  seektolive@gmail.com
 # @Date:   2018-03-19 09:42:28
-# @Last Modified by:   xwren
-# @Last Modified time: 2018-03-22 14:58:33
+# @Last Modified by:   renxuewu
+# @Last Modified time: 2018-03-23 13:24:11
 
 import requests
 from bs4  import BeautifulSoup as bs
@@ -113,7 +113,7 @@ def spider():
 	total_holders = selector.xpath('//*[@id="PagingPanel"]/span/b[2]/text()')
 	# pagenum = total_holders[0]
 	for i in range(10000):
-		url = EOS_TOKEN_HOLDER_URL1+'&p='+str(i+1226)
+		url = EOS_TOKEN_HOLDER_URL1+'&p='+str(i+1)
 		token_holders_spider(url,TOKEN_ID)
 		time.sleep(random.choice(range(1,3)))
 	end = time.clock()
