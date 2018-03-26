@@ -3,10 +3,10 @@
 # -*- coding: utf-8 -*-
 # @Author: xwren
 # @Email:  renxuewu@hotmail.com
-# @Fd:  spider eos transfers data every day
+# @Fd:  spider eos transfers data every day for test
 # @Date:   2018-03-22 21:51:17
 # @Last Modified by:   renxuewu
-# @Last Modified time: 2018-03-26 14:56:37
+# @Last Modified time: 2018-03-26 22:27:43
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
